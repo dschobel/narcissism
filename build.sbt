@@ -2,9 +2,9 @@ import com.typesafe.startscript.StartScriptPlugin
 
 seq(StartScriptPlugin.startScriptForClassesSettings: _*)
 
-name := "hello"
+name := "Narcissism"
 
-version := "1.0"
+version := "ALPHA"
 
 scalaVersion := "2.9.2"
 
