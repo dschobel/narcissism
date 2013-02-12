@@ -1,6 +1,9 @@
+secrets.json
 *.swp
 secrets
 target
 project/boot
 project/target
 project/plugins/target
+.idea
+.idea_modules
