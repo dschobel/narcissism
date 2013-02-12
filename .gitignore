@@ -1,3 +1,4 @@
+*.swp
 secrets
 target
 project/boot
