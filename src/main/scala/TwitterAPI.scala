@@ -11,15 +11,22 @@ import util.{Success, Failure}
 
 object TwitterAPI {
 
-  val AccessToken = "";
-  val AccessSecret = "";
-  val ConsumerKey = "";
-  val ConsumerSecret = "";
-  val consumer = new CommonsHttpOAuthConsumer(ConsumerKey,ConsumerSecret)
-  consumer.setTokenWithSecret(AccessToken, AccessSecret)
+  val secret_file = "./secrets.json"
+  lazy val secrets: Map[String,String] = readSecrets(secret_file)
+
+
+  val consumer = new CommonsHttpOAuthConsumer(secrets("ConsumerKey"),secrets("ConsumerSecret"))
+  consumer.setTokenWithSecret(secrets("AccessToken"), secrets("AccessSecret"))
 
   JSON.globalNumberParser = {input : String => BigDecimal(input)}
 
+  def readSecrets(filename: String)={
+    val source = scala.io.Source.fromFile(filename)
+    val lines = source .mkString
+    source.close ()
+
+    JSON.parseFull(lines).asInstanceOf[Option[Map[String,String]]] getOrElse Map.empty
+  }
 
   def getResponseBody(requestString: String): String= {
     val request = new HttpGet(requestString)
