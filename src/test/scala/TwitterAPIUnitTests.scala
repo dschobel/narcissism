@@ -1,17 +1,20 @@
-import org.scalatest.FunSpec
+import org.scalatest.{BeforeAndAfter, PrivateMethodTester, FunSpec}
 
-class TwitterAPIUnitTests extends FunSpec {
+class TwitterAPIUnitTests extends FunSpec with PrivateMethodTester with BeforeAndAfter {
   describe("parseIds"){
+    val parse_method = PrivateMethod[List[BigDecimal]]('parseIds)
+    val parse = (s:String) => TwitterAPI invokePrivate parse_method(s)
+
     it("should return an empty list for empty string input"){
-      assert(TwitterAPI.parseIds("") === Nil)
+      assert(parse("") === Nil)
     }
 
     it("should return an empty list for malformed jason"){
-      assert(TwitterAPI.parseIds(""" not{really} "json} """) === Nil)
+      assert(parse(""" not{really} "json} """) === Nil)
     }
 
     it("should return a map containing the id fields for well-formed json"){
-      assert(TwitterAPI.parseIds("""  {"ids": [12,34]}   """) === List(12,34))
+      assert(parse("""  {"ids": [12,34]}   """) === List(12,34))
     }
   }
 }

@@ -10,7 +10,7 @@ scalaVersion := "2.10.0"
 
 resolvers += "twitter-repo" at "http://maven.twttr.com"
 
-scalacOptions ++= Seq("-unchecked", "-deprecation")
+scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-language:postfixOps")
 
 libraryDependencies ++= Seq(
                 "com.twitter" % "finagle-core" % "1.9.0", 
