@@ -1,10 +1,11 @@
-import concurrent.{ExecutionContext, Future}
+import concurrent.{Await, Promise, ExecutionContext, Future}
 import ExecutionContext.Implicits.global
 import org.apache.http.util.EntityUtils
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.client.methods.HttpGet
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer
 import scala.util.parsing.json._
+import scala.concurrent.duration._
 
 
 object TwitterAPI {
@@ -53,13 +54,42 @@ class TwitterAPI(conf: Map[String,String]){
    * @param screen_name
    * @return
    */
-  def getFollowers(screen_name: String): Future[List[User]] = {
+  def getFollowers(screen_name: String): Future[Seq[User]] = {
     val request = s"http://api.twitter.com/1.1/followers/ids.json?cursor=-1&screen_name=$screen_name"
     val ids = getResponseBody(request).map{TwitterAPI.parseIds(_)}
-    for ( id <- ids; users <- getUsersFromIds(id)) yield users
+    //for ( id <- ids; users <- getUsersFromIds(id)) yield users
+    ???
   }
 
-  def getUsersFromIds(ids: List[BigDecimal]): Future[List[User]] = {
-    Future{ids.map{id => User("desc",id.toString,"loc","name","profile_url","screenname")}}
+  private def parseUserResponse(response: String): Seq[User]={
+    ???
+  }
+
+  private def makeUserRequest(ids: List[BigDecimal]): String = {
+    ???
+  }
+
+  def gather_futures[A](xs: Seq[Future[A]]): Future[Seq[A]]= {
+    def combine[A,B,C](f1: Future[A], f2: Future[B])(f: (A,B) => C): Future[C] ={
+      for(a <- f1; b <- f2)
+      yield f(a,b)
+    }
+    xs.foldLeft(Future{Seq[A]()}){(acc: Future[Seq[A]],x: Future[A]) => combine(x,acc)((a: A,b: Seq[A]) => b ++ Seq(a))}
+  }
+
+
+  def getUsersFromIds(ids: List[BigDecimal], batch_size:Int = 100): Seq[Future[Seq[User]]] = {
+
+    val queryForUsers: (List[BigDecimal]) => Future[String] = (makeUserRequest _) andThen getResponseBody
+
+    // for(group: List[BigDecimal] <- ids.sliding(100,100);
+    //  response: String <- queryForUsers(group)
+    //) yield parseUserResponse(response)
+
+    val list_of_future_responses: Seq[Future[String]] =
+      for(id_group <- (ids.sliding(batch_size,batch_size)) toSeq) yield queryForUsers(id_group)
+    val future_users: Seq[Future[Seq[User]]] = list_of_future_responses.map {_.map{parseUserResponse(_)}}
+
+    future_users
   }
 }
