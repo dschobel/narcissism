@@ -1,3 +1,5 @@
+package Narcissism
+
 /**
  * User: Daniel Schobel
  * Date: 18/02/13

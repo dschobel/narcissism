@@ -1,3 +1,5 @@
+package Narcissism
+
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 import com.twitter.finagle.builder.ServerBuilder
 import com.twitter.finagle.http.{Http, Response}

@@ -1,3 +1,5 @@
+package Narcissism
+
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.util.{Success,Failure}
