@@ -53,7 +53,6 @@ object TwitterPoller {
     while(true){
       poll_and_process()
       Thread.sleep(2 * 60 * 1000);
-      //Await.ready(pp,  5 minutes)
     }
   }
 }

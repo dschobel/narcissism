@@ -24,38 +24,27 @@ object TwitterAPI {
     JSON.parseFull(lines).asInstanceOf[Option[Map[String,String]]] getOrElse Map.empty
   }
 
-  def parseUsers(user_data: List[Map[String,Any]]): Seq[User]={
-     for {
-                  fields <- user_data;
-                  JSONExtractor.S(id) = fields("id_str")
-                  JSONExtractor.S(name) = fields("name")
-                  JSONExtractor.S(location) = fields("location")
-                  JSONExtractor.S(profile_image_url) = fields("profile_image_url")
-                  JSONExtractor.S(screen_name) = fields("screen_name")
-                  JSONExtractor.S(description) = fields("description")
-                  JSONExtractor.B(following) = fields("following")
-            } yield User(description,id, location,name,profile_image_url,screen_name,following)
-  }
-
   def parseUserResponse(json_string: String): Seq[User]={
-     scala.util.parsing.json.JSON.parseFull(json_string) match{
-       case None => Nil
-       case Some(fields: List[Map[String,Any]]) => TwitterAPI.parseUsers(fields)
-       case _ => Nil
-     }
+      (for{
+        JSONExtractor.L(stuff) <- JSON.parseFull(json_string).toIterable
+        JSONExtractor.M(fields) <- stuff
+        JSONExtractor.S(id) = fields("id_str")
+        JSONExtractor.S(name) = fields("name")
+        JSONExtractor.S(location) = fields("location")
+        JSONExtractor.S(profile_image_url) = fields("profile_image_url")
+        JSONExtractor.S(screen_name) = fields("screen_name")
+        JSONExtractor.S(description) = fields("description")
+        JSONExtractor.B(following) = fields("following")
+        } yield User(description,id, location,name,profile_image_url,screen_name,following)) toSeq
   }
 
   private def parseIds(json: String): Seq[String] ={
     (for{
-      JSONExtractor.M(fields: Map[String,Any]) <- JSON.parseFull(json).toIterable;
+      JSONExtractor.M(fields) <- JSON.parseFull(json).toIterable;
       JSONExtractor.L(list_of_ids) = fields("ids")
       id <- list_of_ids.map {_.toString}
     } yield id) toSeq
   }
-  /* (for (map <- JSON.parseFull(json).asInstanceOf[Option[Map[String,Any]]];
-              list <- map.get("ids").asInstanceOf[Option[List[BigDecimal]]]
-         ) yield list).getOrElse(Nil)*/
-
 }
 
 class TwitterAPI(conf: Map[String,String]){
