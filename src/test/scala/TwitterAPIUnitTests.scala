@@ -1,7 +1,6 @@
 package narcissism
 
 import org.scalatest.{BeforeAndAfter, PrivateMethodTester, FunSpec}
-import Narcissism.{User, TwitterAPI}
 
 class TwitterAPIUnitTests extends FunSpec with PrivateMethodTester with BeforeAndAfter {
   describe("parseIds"){

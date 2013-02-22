@@ -1,4 +1,4 @@
-package Narcissism
+package narcissism
 
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 import com.twitter.finagle.builder.ServerBuilder

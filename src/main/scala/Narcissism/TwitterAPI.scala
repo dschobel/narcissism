@@ -1,4 +1,4 @@
-package Narcissism
+package narcissism
 
 import concurrent.{ExecutionContext, Future}
 import ExecutionContext.Implicits.global
@@ -14,15 +14,7 @@ case class User(description: String, id_str: String,location: String,name: Strin
 object TwitterAPI {
   //JSON.globalNumberParser = {input : String => BigDecimal(input)}
   JSON.globalNumberParser = {input : String => input}
-  def apply(filename: String)= new TwitterAPI(readSecrets(filename))
 
-  def readSecrets(filename: String)={
-    val source = scala.io.Source.fromFile(filename)
-    val lines = source .mkString
-    source.close ()
-
-    JSON.parseFull(lines).asInstanceOf[Option[Map[String,String]]] getOrElse Map.empty
-  }
 
   def parseUserResponse(json_string: String): Seq[User]={
       (for{

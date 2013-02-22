@@ -1,4 +1,4 @@
-package Narcissism
+package narcissism
 
 /**
  * User: Daniel Schobel
